@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.side-panel {
+  width: 40%;
+}
+
+.treasure-map {
+  width: 60%;
+}
