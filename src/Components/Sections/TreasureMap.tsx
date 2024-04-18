@@ -31,19 +31,19 @@ const TreasureMap: React.FC<ITreasureMapProps> = ({
     const canvasContext = canvas.getContext('2d')
     mapImage.onload = () => {
       canvasContext.drawImage(mapImage, 0, 0, canvas.width, canvas.height)
-      dispatch(setMapSize({ x: canvas.width, y: canvas.height }))
     }
     const treasureLocationImage = new Image()
     treasureLocationImage.src = 'RedCross.png'
     treasureLocationImage.onload = () => {
-      const treasureLocation = setTreasureLocation(treasureState.mapSize)
+      const treasureLocation = setTreasureLocation({
+        x: canvas.width,
+        y: canvas.height,
+      })
       dispatch(setTreasureCoordinates(treasureLocation))
       canvasContext.drawImage(
         treasureLocationImage,
         treasureLocation.x,
-        treasureLocation.y,
-        treasureLocation.x + treasureImageSize,
-        treasureLocation.y + treasureImageSize
+        treasureLocation.y
       )
     }
   }, [])

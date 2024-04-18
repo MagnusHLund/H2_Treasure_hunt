@@ -11,7 +11,6 @@ const Text: React.FC<Arrow> = ({ size = '50px' }) => {
   const [direction, setDirection] = useState(0)
   const treasureState = useSelector((state: TreasureState) => state.treasure)
 
-  // direction acts like a compass
   useEffect(() => {
     if (
       treasureState.clickedCoords.x > 0 &&
