@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  setMapSize,
   setTreasureCoordinates,
   setUserClickedPosition,
 } from '../../Redux/Actions/treasureActions'
 import { setTreasureLocation } from '../../Utils/setTreasureLocation'
 import { TreasureState } from '../../Redux/Reducers/treasureReducer'
+import './TreasureMap.css'
+import { coordinates } from '../../../Types/coordinates'
+import { digTreasure } from '../../Utils/digTreasure'
 
 interface ITreasureMapProps {
   className: string
@@ -17,47 +19,50 @@ interface ITreasureMapProps {
 const TreasureMap: React.FC<ITreasureMapProps> = ({
   className = '',
   height = '500px',
-  treasureImageSize = 1,
 }) => {
   const dispatch = useDispatch()
-  const treasureState = useSelector((state: TreasureState) => state.treasure)
+  const clickedCoords = useSelector(
+    (state: TreasureState) => state.treasure.clickedCoords
+  )
   const canvasRef = useRef(null)
 
   useEffect(() => {
     const mapImage = new Image()
     mapImage.src = 'Map.jpg'
-    mapImage.className = 'map'
-    const canvas = canvasRef.current
-    const canvasContext = canvas.getContext('2d')
-    mapImage.onload = () => {
-      canvasContext.drawImage(mapImage, 0, 0, canvas.width, canvas.height)
-    }
     const treasureLocationImage = new Image()
     treasureLocationImage.src = 'RedCross.png'
+
+    const canvas = canvasRef.current
+    const canvasContext = canvas.getContext('2d')
+
     treasureLocationImage.onload = () => {
+      canvasContext.drawImage(mapImage, 0, 0, canvas.width, canvas.height)
       const treasureLocation = setTreasureLocation({
         x: canvas.width,
         y: canvas.height,
       })
+      const IMAGE_OFFSET = 5
       dispatch(setTreasureCoordinates(treasureLocation))
       canvasContext.drawImage(
         treasureLocationImage,
-        treasureLocation.x,
-        treasureLocation.y
+        treasureLocation.x - IMAGE_OFFSET,
+        treasureLocation.y - IMAGE_OFFSET
       )
     }
   }, [])
 
+  useEffect(() => {
+    digTreasure()
+  }, [clickedCoords])
+
   const handleClick = (
     event: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
-    console.log('test')
-    dispatch(
-      setUserClickedPosition({
-        x: event.nativeEvent.offsetX,
-        y: event.nativeEvent.offsetY,
-      })
-    )
+    const clickPosition: coordinates = {
+      x: event.nativeEvent.offsetX,
+      y: event.nativeEvent.offsetY,
+    }
+    dispatch(setUserClickedPosition(clickPosition))
   }
 
   return (
